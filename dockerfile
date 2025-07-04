@@ -16,7 +16,9 @@ WORKDIR /tools
 RUN sudo apt-get install -y apt-utils && \
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-RUN sudo apt-get install -y \
+RUN sudo apt-get update && \
+    sudo apt-get upgrade -y && \
+    sudo apt-get install -y --fix-missing \
     apt-transport-https \
     build-essential \
     ca-certificates \
@@ -59,18 +61,18 @@ RUN pip install --upgrade pip && \
     pip install h5py docutils psutil mrcfile pango fonts
 
 # Install MolProbity
-# RUN wget -O install_via_bootstrap.sh https://github.com/rlabduke/MolProbity/raw/master/install_via_bootstrap.sh && \
-#     sudo chmod +x install_via_bootstrap.sh && \
-#     ./install_via_bootstrap.sh 6 && \
-#     ./molprobity/setup.sh
+#  RUN wget -O install_via_bootstrap.sh https://github.com/rlabduke/MolProbity/raw/master/install_via_bootstrap.sh && \
+#      sudo chmod +x install_via_bootstrap.sh && \
+#      ./install_via_bootstrap.sh 4 && \
+#      ./molprobity/setup.sh
 
 # copy and extract molprobity
-COPY --chown=root:root ./precompiled/molprobity.tar.gz.part* /tools/
+# COPY --chown=root:root ./precompiled/molprobity.tar.gz.part* /tools/
+COPY --chown=root:root ./precompiled/molprobity.tar.gz /tools/
 COPY ./src ./package.json pnpm-lock.yaml nodemon.json tsconfig.json /webserver/
-RUN cat /tools/molprobity.tar.gz.part* > /tools/molprobity.tar.gz && \
-    rm /tools/molprobity.tar.gz.part* && \
-    tar -xzf /tools/molprobity.tar.gz && \
-    rm /tools/molprobity.tar.gz
+RUN chmod -R 777 /tools
+#RUN /bin/bash -c cat /tools/molprobity.tar.gz.part* > /tools/molprobity.tar.gz && sync && rm /tools/molprobity.tar.gz.part*
+RUN tar -xzf /tools/molprobity.tar.gz &&     rm /tools/molprobity.tar.gz
 
 ENV PATH="$PATH:/tools/molprobity/molprobity/cmdline"
 
