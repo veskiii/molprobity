@@ -69,7 +69,7 @@ RUN pip install --upgrade pip && \
 # copy and extract molprobity
 # COPY --chown=root:root ./precompiled/molprobity.tar.gz.part* /tools/
 COPY --chown=root:root ./precompiled/molprobity.tar.gz /tools/
-COPY ./src ./package.json pnpm-lock.yaml nodemon.json tsconfig.json /webserver/
+COPY ./src ./package.json pnpm-lock.yaml nodemon.json tsconfig.json pnpm-workspace.yaml /webserver/
 RUN chmod -R 777 /tools
 #RUN /bin/bash -c cat /tools/molprobity.tar.gz.part* > /tools/molprobity.tar.gz && sync && rm /tools/molprobity.tar.gz.part*
 RUN tar -xzf /tools/molprobity.tar.gz &&     rm /tools/molprobity.tar.gz
@@ -80,7 +80,7 @@ WORKDIR /webserver
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
 ENV NVM_DIR=/root/.nvm
-ENV NODE_VERSION=20.3.0
+ENV NODE_VERSION=22.13.0
 
 RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
 RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
